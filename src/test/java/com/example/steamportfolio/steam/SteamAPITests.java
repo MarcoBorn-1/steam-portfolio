@@ -63,4 +63,50 @@ class SteamAPITests {
         // Then
         assertThat(result).isNull();
     }
+
+    @Test
+    void invalidCurrencyCode() {
+        // Given
+        String name = "Spectrum 2 Case";
+        String invalidCurrencyCode = "Bananas";
+        int defaultAppID = 730;
+
+        // When
+        PriceOverview result = underTest.getPriceOverview(invalidCurrencyCode, defaultAppID, name);
+
+        // Then
+        assertThat(result).isNull();
+    }
+
+    @Test
+    void invalidAppId() {
+        // Given
+        String name = "Spectrum 2 Case";
+        String validCurrencyCode = "PLN";
+        int invalidAppID = -1;
+
+        // When
+        PriceOverview result = underTest.getPriceOverview(validCurrencyCode, invalidAppID, name);
+
+        // Then
+        assertThat(result).isNull();
+    }
+
+    @Test
+    void validRequest() {
+        // Given
+        String name = "Spectrum 2 Case";
+        String validCurrencyCode = "PLN";
+        int defaultAppID = 730;
+
+        // When
+        PriceOverview result = underTest.getPriceOverview(validCurrencyCode, defaultAppID, name);
+
+        // Then
+        assertThat(result).isNotNull();
+        assertThat(result.getCurrencyCode()).isEqualTo(6);
+        assertThat(result.getCurrentPrice()).isPositive();
+        assertThat(result.getMedianPrice()).isPositive();
+        assertThat(result.getVolume()).isPositive();
+    }
 }
