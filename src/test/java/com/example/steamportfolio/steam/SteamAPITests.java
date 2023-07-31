@@ -5,9 +5,13 @@ import com.example.steamportfolio.service.SteamAPIService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+
+@SpringBootTest
 class SteamAPITests {
 
     @Autowired
@@ -26,6 +30,7 @@ class SteamAPITests {
         int defaultAppID = 730;
 
         // When
+
         PriceOverview result = underTest.getPriceOverview(defaultCurrencyCode, defaultAppID, emptyName);
 
         // Then
@@ -46,9 +51,10 @@ class SteamAPITests {
         assertThat(result).isNull();
     }
 
-    /***
+    /*
      The item in question was not listed on the Steam Market for a long time, and even if it did, it'd be instantly bought.
      That means that although the API will return success: true, it won't return any information in the JSON.
+     If only this test fails (shouldn't really happen), check the result manually, just in case.
      */
     @Test
     void noDataForGivenName() {

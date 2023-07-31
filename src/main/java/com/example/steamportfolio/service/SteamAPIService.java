@@ -2,8 +2,10 @@ package com.example.steamportfolio.service;
 
 import com.example.steamportfolio.entity.Currency;
 import com.example.steamportfolio.entity.PriceOverview;
+import com.example.steamportfolio.repository.CurrencyRepository;
 import org.apache.commons.io.IOUtils;
 import org.json.JSONException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.json.JSONObject;
 import java.io.IOException;
@@ -13,12 +15,15 @@ import java.nio.charset.StandardCharsets;
 
 @Service
 public class SteamAPIService {
-    public PriceOverview getPriceOverview(String currencyCode, int appID, String name) {
-        Currency currency = Currency.findCurrency(currencyCode);
+    @Autowired
+    CurrencyRepository currencyRepository;
+
+    public PriceOverview getPriceOverview(String currencyStr, int appID, String name) {
+        Currency currency = currencyRepository.findCurrencyByNameIgnoreCaseOrSignIgnoreCase(currencyStr, currencyStr);
         if (currency == null) return null;
 
         StringBuilder urlBuilder = new StringBuilder("https://steamcommunity.com/market/priceoverview/?");
-        urlBuilder.append("currency=").append(currency.getCURRENCY_CODE());
+        urlBuilder.append("currency=").append(currency.getCode());
         urlBuilder.append("&appid=").append(appID);
         urlBuilder.append("&market_hash_name=").append(name.replace(" ", "+"));
 
@@ -37,10 +42,10 @@ public class SteamAPIService {
         PriceOverview item = new PriceOverview();
 
         try {
-            item.setCurrencyCode(currency.getCURRENCY_CODE());
+            item.setCurrencyCode(currency.getCode());
 
-            String volumeStr = jsonObject.getString("volume");
-            item.setVolume(Integer.parseInt(volumeStr.replace(",", "")));
+            String volumeStr = jsonObject.getString("volume").replace(",", "");
+            item.setVolume(Integer.parseInt(volumeStr));
             item.setCurrentPrice(getValue(jsonObject.getString("lowest_price"), currency));
             item.setMedianPrice(getValue(jsonObject.getString("median_price"), currency));
         }
@@ -54,6 +59,6 @@ public class SteamAPIService {
     }
 
     private BigDecimal getValue(String value, Currency currency) throws NumberFormatException {
-        return BigDecimal.valueOf(Double.parseDouble(value.replace(currency.getCURRENCY_SIGN(), "").replace(",", ".")));
+        return BigDecimal.valueOf(Double.parseDouble(value.replace(currency.getSign(), "").replace(",", ".")));
     }
 }

@@ -10,9 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-@Controller
 @RestController
-@RequestMapping("/steam")
+@RequestMapping("/api/steam")
 public class SteamAPIController {
     private final SteamAPIService steamAPIService;
 
@@ -25,9 +24,9 @@ public class SteamAPIController {
     Will default to polish zloty (PLN) as currency, and CS:GO as appID
      */
     @GetMapping("/priceOverview")
-    public ResponseEntity<PriceOverview> getPriceOverview(@RequestParam(required = false, defaultValue = "PLN") String currencyCode,
+    public ResponseEntity<PriceOverview> getPriceOverview(@RequestParam(required = false, defaultValue = "PLN") String currency,
                                                           @RequestParam(required = false, defaultValue = "730") int appID,
                                                           @RequestParam String name) {
-        return ResponseEntity.ok(steamAPIService.getPriceOverview(currencyCode, appID, name));
+        return ResponseEntity.ok(steamAPIService.getPriceOverview(currency, appID, name));
     }
 }
