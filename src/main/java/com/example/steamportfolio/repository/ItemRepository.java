@@ -8,6 +8,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface ItemRepository extends JpaRepository<Item, Long> {
-    @Transactional(dontRollbackOn = DataIntegrityViolationException.class)
-    <S extends Item> List<S> saveAll(Iterable<S> entities);
+
 }

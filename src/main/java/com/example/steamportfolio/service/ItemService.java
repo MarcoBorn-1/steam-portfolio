@@ -61,8 +61,7 @@ public class ItemService {
 
             itemList.add(item);
         }
-        itemList.stream().limit(1).forEach(System.out::println);
-        System.out.println(start);
+        System.out.println("Scanned " + start + " items.");
         return itemList;
     }
 
@@ -79,14 +78,17 @@ public class ItemService {
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
-                catch (DataIntegrityViolationException dive) {
-                    dive.printStackTrace();
-                }
                 List<Item> itemList = getItemsWithPagination(finalPagination);
                 if (itemList != null) {
                     System.out.println("Saving to database...");
-                    //itemList.forEach(item -> itemRepository.save(item));
-                    itemRepository.saveAll(itemList);
+                    itemList.forEach(item -> {
+                        try {
+                            itemRepository.save(item);
+                        }
+                        catch (DataIntegrityViolationException e) {
+                            // If item violates unique name constraint, it will not save
+                        }
+                    });
                 }
                 else {
                     System.out.println("Nothing to save...");
