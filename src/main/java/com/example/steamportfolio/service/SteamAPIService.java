@@ -42,7 +42,7 @@ public class SteamAPIService {
         PriceOverview item = new PriceOverview();
 
         try {
-            item.setCurrencyCode(currency.getCode());
+            item.setCurrency(currency);
 
             String volumeStr = jsonObject.getString("volume").replace(",", "");
             item.setVolume(Integer.parseInt(volumeStr));
@@ -59,6 +59,6 @@ public class SteamAPIService {
     }
 
     private BigDecimal getValue(String value, Currency currency) throws NumberFormatException {
-        return BigDecimal.valueOf(Double.parseDouble(value.replace(currency.getSign(), "").replace(",", ".")));
+        return new BigDecimal(value.replace(currency.getSign(), "").replace(",", "."));
     }
 }

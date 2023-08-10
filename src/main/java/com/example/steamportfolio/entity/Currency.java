@@ -1,5 +1,6 @@
 package com.example.steamportfolio.entity;
 
+import com.example.steamportfolio.entity.enums.Position;
 import jakarta.persistence.*;
 import lombok.*;
 

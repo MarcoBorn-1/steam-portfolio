@@ -14,6 +14,6 @@ import java.math.BigDecimal;
 public class PriceOverview {
     private BigDecimal currentPrice;
     private BigDecimal medianPrice;
-    private int currencyCode;
+    private Currency currency;
     private int volume;
 }

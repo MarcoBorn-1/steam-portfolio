@@ -30,7 +30,6 @@ class SteamAPITests {
         int defaultAppID = 730;
 
         // When
-
         PriceOverview result = underTest.getPriceOverview(defaultCurrencyCode, defaultAppID, emptyName);
 
         // Then
@@ -110,7 +109,7 @@ class SteamAPITests {
 
         // Then
         assertThat(result).isNotNull();
-        assertThat(result.getCurrencyCode()).isEqualTo(6);
+        assertThat(result.getCurrency().getCode()).isEqualTo(6);
         assertThat(result.getCurrentPrice()).isPositive();
         assertThat(result.getMedianPrice()).isPositive();
         assertThat(result.getVolume()).isPositive();
