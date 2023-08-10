@@ -1,25 +1,24 @@
 package com.example.steamportfolio.steam;
 
 import com.example.steamportfolio.entity.PriceOverview;
-import com.example.steamportfolio.service.SteamAPIService;
+import com.example.steamportfolio.service.PriceOverviewService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 
 @SpringBootTest
-class SteamAPITests {
+class PriceOverviewTests {
 
     @Autowired
-    private SteamAPIService underTest;
+    private PriceOverviewService underTest;
 
     @BeforeEach
     void setUp() {
-        underTest = new SteamAPIService();
+        underTest = new PriceOverviewService();
     }
 
     @Test

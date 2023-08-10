@@ -14,7 +14,7 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
 @Service
-public class SteamAPIService {
+public class PriceOverviewService {
     @Autowired
     CurrencyRepository currencyRepository;
 
