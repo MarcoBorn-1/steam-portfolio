@@ -4,17 +4,14 @@ import com.example.steamportfolio.entity.Item;
 import com.example.steamportfolio.entity.enums.Category;
 import com.example.steamportfolio.entity.enums.Quality;
 import com.example.steamportfolio.entity.enums.Type;
+import com.example.steamportfolio.entity.helper.MarketplaceURLBuilder;
 import com.example.steamportfolio.repository.ItemRepository;
-import org.apache.commons.io.IOUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -24,24 +21,11 @@ import java.util.concurrent.Executors;
 public class ItemService {
     @Autowired
     ItemRepository itemRepository;
-    public List<Item> getItemsWithPagination(int start) {
-        StringBuilder urlBuilder = new StringBuilder("https://steamcommunity.com/market/search/render/?");
-        urlBuilder.append("norender=").append(1);
-        urlBuilder.append("&appid=").append(730);
-        urlBuilder.append("&start=").append(start);
-        urlBuilder.append("&count=").append(100);
 
-        JSONObject jsonObject;
-        try {
-            URL url = new URL(urlBuilder.toString());
-            String json = IOUtils.toString(url, StandardCharsets.UTF_8);
-            jsonObject = new JSONObject(json);
-        } catch (IOException e) {
-            return null;
-        }
-        if (!jsonObject.getBoolean("success")) {
-            return null;
-        }
+    public List<Item> getItemsWithPagination(int start) {
+        MarketplaceURLBuilder urlBuilder = new MarketplaceURLBuilder(start);
+        JSONObject jsonObject = urlBuilder.getJson();
+        if (jsonObject == null || !jsonObject.getBoolean("success")) return null;
 
         JSONArray array = jsonObject.getJSONArray("results");
         if (array.isEmpty()) return null;
@@ -67,11 +51,17 @@ public class ItemService {
 
     public void getAllItems() {
         int pagination = 0;
+        int total_count = getItemQuantityFromMarketplace();
+        if (total_count < 0) return;
+
+        // ExecutorService used to execute and queue up tasks to retrieve market items
+        // Only one thread pool is used to make sure the rate limit for requests is not met
         ExecutorService executor = Executors.newFixedThreadPool(1);
-        // TODO: change while argument to not be fixed number
-        // TODO: find a way to not rollback the saving of the entire list (@Transactional?)
-        while (pagination < 20500) {
-            int finalPagination = pagination;
+
+        // An additional 100 is added to the total amount, because the amount of items can fluctuate by +/- 50 items.
+        while (pagination < total_count + 100) {
+            int finalPagination = pagination; // Runnable task below requires "effectively final" variable
+
             Runnable task = () -> {
                 try {
                     Thread.sleep(12_000);
@@ -99,38 +89,44 @@ public class ItemService {
         }
     }
 
-
-
     // Adds category, quality and type to item using JSONObject
-    // TODO: try replacing the for -> if to a stream
-    public void addInfoToItem(Item item, JSONObject object) {
-        String type = object.getJSONObject("asset_description").getString("type");
-        for (Type typeEnum: Type.values()) {
-            if (type.endsWith(typeEnum.toString())) {
-                item.setType(typeEnum);
-                type = type.replace(typeEnum.toString(), "").strip();
+    private void addInfoToItem(Item item, JSONObject object) {
+        String info = object.getJSONObject("asset_description").getString("type");
+        for (Type type: Type.values()) {
+            if (info.endsWith(type.toString())) {
+                item.setType(type);
+                info = info.replace(type.toString(), "").strip();
                 break;
             }
         }
 
         for (Quality quality: Quality.values()) {
-            if (type.endsWith(quality.toString())) {
+            if (info.endsWith(quality.toString())) {
                 item.setQuality(quality);
-                type = type.replace(quality.toString(), "").strip();
+                info = info.replace(quality.toString(), "").strip();
                 break;
             }
         }
 
-        if (type.length() == 0) {
+        if (info.length() == 0) {
             item.setCategory(Category.NORMAL);
         }
         else {
             for (Category category: Category.values()) {
-                if (type.startsWith(category.toString())) {
+                if (info.startsWith(category.toString())) {
                     item.setCategory(category);
                     break;
                 }
             }
         }
+    }
+
+    // Retrieves item quantity from marketplace.
+    private int getItemQuantityFromMarketplace() {
+        MarketplaceURLBuilder urlBuilder = new MarketplaceURLBuilder(0);
+        JSONObject jsonObject = urlBuilder.getJson();
+        if (jsonObject == null || !jsonObject.getBoolean("success")) return -1;
+
+        return jsonObject.getInt("total_count");
     }
 }
