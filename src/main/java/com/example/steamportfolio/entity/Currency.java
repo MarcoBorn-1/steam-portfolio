@@ -4,7 +4,6 @@ import com.example.steamportfolio.entity.enums.Position;
 import jakarta.persistence.*;
 import lombok.*;
 
-@Table
 @Entity
 @Getter
 @AllArgsConstructor

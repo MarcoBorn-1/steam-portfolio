@@ -20,7 +20,7 @@ public class PriceOverviewController {
     }
 
     /*
-    Will default to polish zloty (PLN) as currency, and CS:GO as appID
+    Will default to dollar (USD) as currency, and CS:GO (730) as appID
     */
     @GetMapping("/priceOverview")
     public ResponseEntity<PriceOverview> getPriceOverview(@RequestParam(required = false, defaultValue = "USD") String currency,

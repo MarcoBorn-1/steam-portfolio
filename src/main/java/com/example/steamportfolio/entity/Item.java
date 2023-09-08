@@ -5,16 +5,13 @@ import com.example.steamportfolio.entity.enums.Quality;
 import com.example.steamportfolio.entity.enums.Type;
 import jakarta.persistence.*;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-@Table
 @Entity
 @Getter
 @Setter
 @ToString
-@NoArgsConstructor
 public class Item {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
