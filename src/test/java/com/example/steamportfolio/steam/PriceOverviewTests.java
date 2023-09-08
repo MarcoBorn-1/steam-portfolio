@@ -1,6 +1,6 @@
 package com.example.steamportfolio.steam;
 
-import com.example.steamportfolio.entity.PriceOverview;
+import com.example.steamportfolio.entity.dto.PriceOverview;
 import com.example.steamportfolio.service.PriceOverviewService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

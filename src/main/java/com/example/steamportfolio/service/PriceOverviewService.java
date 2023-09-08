@@ -1,7 +1,7 @@
 package com.example.steamportfolio.service;
 
 import com.example.steamportfolio.entity.Currency;
-import com.example.steamportfolio.entity.PriceOverview;
+import com.example.steamportfolio.entity.dto.PriceOverview;
 import com.example.steamportfolio.entity.helper.PriceOverviewURLBuilder;
 import com.example.steamportfolio.repository.CurrencyRepository;
 import org.json.JSONException;

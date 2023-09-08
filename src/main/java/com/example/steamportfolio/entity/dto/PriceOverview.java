@@ -1,5 +1,6 @@
-package com.example.steamportfolio.entity;
+package com.example.steamportfolio.entity.dto;
 
+import com.example.steamportfolio.entity.Currency;
 import lombok.Getter;
 import lombok.Setter;
 

@@ -1,6 +1,6 @@
 package com.example.steamportfolio.controller;
 
-import com.example.steamportfolio.entity.PriceOverview;
+import com.example.steamportfolio.entity.dto.PriceOverview;
 import com.example.steamportfolio.service.PriceOverviewService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
