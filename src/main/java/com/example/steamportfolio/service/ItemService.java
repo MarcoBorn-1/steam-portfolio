@@ -22,6 +22,18 @@ public class ItemService {
     @Autowired
     ItemRepository itemRepository;
 
+    public int getItemListingAmount(String name) {
+        MarketplaceURLBuilder urlBuilder = new MarketplaceURLBuilder(1, name);
+        JSONObject jsonObject = urlBuilder.getJson();
+        if (jsonObject == null || !jsonObject.getBoolean("success")) return -1;
+
+        JSONArray array = jsonObject.getJSONArray("results");
+        if (array.isEmpty()) return -1;
+        JSONObject object = array.getJSONObject(0);
+
+        return object.getInt("sell_listings");
+    }
+
     public List<Item> getItemsWithPagination(int start) {
         MarketplaceURLBuilder urlBuilder = new MarketplaceURLBuilder(start);
         JSONObject jsonObject = urlBuilder.getJson();

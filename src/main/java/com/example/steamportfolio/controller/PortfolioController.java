@@ -6,12 +6,14 @@ import com.example.steamportfolio.entity.Portfolio;
 import com.example.steamportfolio.entity.PortfolioItem;
 import com.example.steamportfolio.entity.dto.PortfolioDTO;
 import com.example.steamportfolio.entity.dto.PortfolioItemDTO;
+import com.example.steamportfolio.entity.dto.PortfolioOverview;
 import com.example.steamportfolio.service.PortfolioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.NoSuchElementException;
+import java.util.concurrent.ExecutionException;
 
 @RestController
 @RequestMapping("/api/portfolio")
@@ -37,8 +39,8 @@ public class PortfolioController {
     }
 
     @GetMapping("/{id}/get")
-    public ResponseEntity<PortfolioItem> getPortfolio() {
-        return null;
+    public ResponseEntity<PortfolioOverview> getPortfolio(@PathVariable(name = "id") Long id) throws ExecutionException, InterruptedException {
+        return ResponseEntity.ok(portfolioService.getPortfolio(id));
     }
 
 
