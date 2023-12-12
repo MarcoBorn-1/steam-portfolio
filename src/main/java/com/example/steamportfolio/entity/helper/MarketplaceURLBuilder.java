@@ -15,7 +15,7 @@ public class MarketplaceURLBuilder extends URLBuilder {
         urlTemp.append("norender=").append(1);
         urlTemp.append("&appid=").append(730);
         urlTemp.append("&count=").append(count);
-        urlTemp.append("&query=").append(query);
+        urlTemp.append("&query=").append(query.replace(" ", "+"));
         setUrlStr(urlTemp);
     }
 }
