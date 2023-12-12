@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -14,8 +15,10 @@ import java.util.Date;
 @Getter
 @Setter
 @NoArgsConstructor
+@EntityListeners(AuditingEntityListener.class)
 public class ItemData {
-    public ItemData(PriceOverview priceOverview, int listings) {
+    public ItemData(Item item, PriceOverview priceOverview, int listings) {
+        this.item = item;
         this.currentPrice = priceOverview.getCurrentPrice();
         this.medianPrice = priceOverview.getMedianPrice();
         this.volume = priceOverview.getVolume();
@@ -31,8 +34,7 @@ public class ItemData {
     private int volume;
     private int listings;
 
-    @Column(name = "date", nullable = false, updatable = false)
-    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "date")
     @CreatedDate
     private Date date;
 
