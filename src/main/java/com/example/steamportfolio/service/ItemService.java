@@ -19,8 +19,12 @@ import java.util.concurrent.Executors;
 
 @Service
 public class ItemService {
-    @Autowired
     ItemRepository itemRepository;
+
+    @Autowired
+    ItemService(ItemRepository itemRepository) {
+        this.itemRepository = itemRepository;
+    }
 
     public int getItemListingAmount(String name) {
         MarketplaceURLBuilder urlBuilder = new MarketplaceURLBuilder(1, name);

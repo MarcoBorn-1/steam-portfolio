@@ -12,8 +12,12 @@ import java.math.BigDecimal;
 
 @Service
 public class PriceOverviewService {
-    @Autowired
     CurrencyRepository currencyRepository;
+
+    @Autowired
+    PriceOverviewService(CurrencyRepository currencyRepository) {
+        this.currencyRepository = currencyRepository;
+    }
 
     public PriceOverview getPriceOverview(String currencyStr, int appID, String name) {
         Currency currency = currencyRepository.findCurrencyByNameIgnoreCaseOrSignIgnoreCase(currencyStr, currencyStr);
