@@ -112,7 +112,7 @@ public class PortfolioService {
                 }
 
                 PriceOverview priceOverview = priceOverviewService.getPriceOverview(item.getPortfolio().getCurrency().getName(), 730, item.getItem().getName());
-                ItemData itemData = new ItemData(priceOverview, listingAmount);
+                ItemData itemData = new ItemData(item.getItem(), priceOverview, listingAmount);
                 itemDataRepository.save(itemData);
                 return new PortfolioContent(
                         item.getAmount(),
@@ -129,10 +129,40 @@ public class PortfolioService {
         List<Future<PortfolioContent>> contentFuture = executor.invokeAll(taskList);
         List<PortfolioContent> portfolioContentList = new ArrayList<>();
         for (Future<PortfolioContent> content: contentFuture) {
-            portfolioContentList.add(content.get());
+            PortfolioContent portfolioContent = content.get();
+            portfolioContentList.add(portfolioContent);
         }
 
+        BigDecimal totalValue = BigDecimal.valueOf(
+                portfolioContentList.
+                        stream().
+                        mapToDouble(
+                                item -> item.currentPrice().multiply(
+                                                BigDecimal.valueOf(item.amountOwned())).
+                                        doubleValue()).
+                        sum()
+        );
+        BigDecimal totalInvested = BigDecimal.valueOf(
+                portfolioContentList.
+                        stream().
+                        mapToDouble(
+                        item -> item.pricePaid().multiply(
+                                BigDecimal.valueOf(item.amountOwned())).
+                                doubleValue()).
+                        sum()
+            );
+        int totalItems = portfolioContentList.stream().mapToInt(PortfolioContent::amountOwned).sum();
 
-        return null;
+        return new PortfolioOverview(
+                portfolio.get().getId(),
+                totalValue,
+                totalInvested,
+                totalItems,
+                BigDecimal.valueOf(0),
+                BigDecimal.valueOf(0),
+                BigDecimal.valueOf(0),
+                BigDecimal.valueOf(0),
+                portfolioContentList
+        );
     }
 }
