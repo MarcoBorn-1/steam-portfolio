@@ -1,5 +1,6 @@
 package com.example.steamportfolio.config;
 
+import com.example.steamportfolio.config.exceptions.CurrencyNotFoundException;
 import com.example.steamportfolio.config.exceptions.DuplicateNameException;
 import com.example.steamportfolio.config.exceptions.ItemNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -18,7 +19,7 @@ public class GlobalExceptionHandler {
                 .body("An error occurred: " + e.getMessage());
     }
 
-    @ExceptionHandler(NoSuchElementException.class)
+    @ExceptionHandler({NoSuchElementException.class, CurrencyNotFoundException.class})
     public ResponseEntity<String> handleElementNotFoundException(Exception e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body("An error occurred: " + e.getMessage());

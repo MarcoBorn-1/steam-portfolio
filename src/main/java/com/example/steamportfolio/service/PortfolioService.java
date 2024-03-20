@@ -1,11 +1,9 @@
 package com.example.steamportfolio.service;
 
+import com.example.steamportfolio.config.exceptions.CurrencyNotFoundException;
 import com.example.steamportfolio.config.exceptions.DuplicateNameException;
 import com.example.steamportfolio.config.exceptions.ItemNotFoundException;
-import com.example.steamportfolio.entity.Item;
-import com.example.steamportfolio.entity.ItemData;
-import com.example.steamportfolio.entity.Portfolio;
-import com.example.steamportfolio.entity.PortfolioItem;
+import com.example.steamportfolio.entity.*;
 import com.example.steamportfolio.entity.dto.*;
 import com.example.steamportfolio.repository.CurrencyRepository;
 import com.example.steamportfolio.repository.ItemDataRepository;
@@ -44,17 +42,21 @@ public class PortfolioService {
         this.priceOverviewService = priceOverviewService;
         this.itemDataRepository = itemDataRepository;
     }
-    public Portfolio createPortfolio(PortfolioDTO portfolioDTO) throws DuplicateNameException {
+    public Portfolio createPortfolio(PortfolioDTO portfolioDTO) throws DuplicateNameException, CurrencyNotFoundException {
         // Portfolio name has to be unique for owner
         if (portfolioRepository.findPortfolioByOwnerAndName(portfolioDTO.owner(), portfolioDTO.name()).isPresent()) {
             throw new DuplicateNameException("The portfolio name you've used is already in use.");
         }
 
+        Currency currency = currencyRepository.findCurrencyByNameIgnoreCaseOrSignIgnoreCase(portfolioDTO.currency(), portfolioDTO.currency());
+        if (currency == null) {
+            throw new CurrencyNotFoundException();
+        }
+
         Portfolio portfolio = new Portfolio();
         portfolio.setName(portfolioDTO.name());
         portfolio.setOwner(portfolioDTO.owner());
-        portfolio.setCurrency(currencyRepository.
-                findCurrencyByNameIgnoreCaseOrSignIgnoreCase(portfolioDTO.currency(), portfolioDTO.currency()));
+        portfolio.setCurrency(currency);
         portfolioRepository.save(portfolio);
         return portfolio;
     }
